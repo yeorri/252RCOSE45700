@@ -3,6 +3,7 @@ using UnityEngine;
 public class Tower : MonoBehaviour
 {
     [Header("설정")]
+    public int cost = 10;
     public float range = 5f;
     public float fireRate = 1f;
     public LayerMask enemyLayer;

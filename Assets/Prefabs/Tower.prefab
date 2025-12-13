@@ -141,8 +141,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b5b1d325e35eba4a8c6b9f03e059edb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tower
-  range: 3
-  fireRate: 5
+  cost: 10
+  range: 5
+  fireRate: 3
   enemyLayer:
     serializedVersion: 2
     m_Bits: 64
