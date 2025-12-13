@@ -1,26 +1,26 @@
 using UnityEngine;
+using UnityEngine.SceneManagement; // [필수] 씬(Scene)을 다시 불러오려면 이게 필요합니다!
 
 public class GameManager : MonoBehaviour
 {
-    // [싱글톤 패턴] 어디서든 GameManager.Instance로 접근 가능하게 함
     public static GameManager Instance;
 
     [Header("게임 설정")]
-    public int startLives = 20;   // 시작 체력
-    public int startMoney = 100;  // 시작 돈
+    public int startLives = 20;
+    public int startMoney = 100;
 
-    [Header("현재 상태 (확인용)")]
+    [Header("UI 연결")]
+    public GameObject gameOverUI; // 게임 오버 패널을 여기에 연결할 겁니다.
+
+    [Header("현재 상태")]
     public int lives;
     public int money;
-
     public bool isGameOver = false;
 
     void Awake()
     {
-        // 싱글톤 설정
         if (Instance != null)
         {
-            Debug.LogError("GameManager가 두 개 이상입니다! 하나를 파괴합니다.");
             Destroy(gameObject);
             return;
         }
@@ -29,49 +29,64 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        lives = startLives; //20
-        money = startMoney; //100
+        lives = startLives;
+        money = startMoney;
         isGameOver = false;
+        
+        // 시작할 때 게임 오버 창은 꺼둡니다.
+        if(gameOverUI != null) gameOverUI.SetActive(false);
     }
 
-    // 체력 감소 함수 (적이 목표에 도착했을 때 호출)
     public void TakeDamage(int amount)
     {
         if (isGameOver) return;
 
         lives -= amount;
-        Debug.Log("아군 기지 피해 입음! 남은 체력: " + lives);
 
         if (lives <= 0)
         {
+            lives = 0; // 음수가 안 되게 0으로 고정
             EndGame();
         }
     }
 
-    // 돈 획득 함수 (적이 죽었을 때 호출)
     public void AddMoney(int amount)
     {
         money += amount;
-        Debug.Log("돈 획득! 현재 돈: " + money);
     }
 
-    // 돈 사용 함수 (타워 지을 때 호출, true면 성공, false면 실패)
     public bool SpendMoney(int amount)
     {
         if (money >= amount)
         {
             money -= amount;
-            return true; // 구매 성공
+            return true;
         }
-        
-        Debug.Log("돈이 부족합니다!");
-        return false; // 구매 실패
+        return false;
     }
 
     void EndGame()
     {
         isGameOver = true;
         Debug.Log("게임 오버!");
-        // 여기에 나중에 게임 오버 UI 띄우는 코드 추가 예정
+
+        // 1. 게임 오버 UI 켜기
+        if (gameOverUI != null)
+        {
+            gameOverUI.SetActive(true);
+        }
+
+        // 2. 게임 시간 멈추기 (모든 움직임 정지)
+        Time.timeScale = 0f; 
+    }
+
+    // "다시 하기" 버튼이 누를 함수
+    public void Retry()
+    {
+        // 1. 멈췄던 시간을 다시 흐르게 함 (중요! 안 하면 재시작해도 멈춰있음)
+        Time.timeScale = 1f;
+
+        // 2. 현재 보고 있는 씬을 처음부터 다시 로드
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
