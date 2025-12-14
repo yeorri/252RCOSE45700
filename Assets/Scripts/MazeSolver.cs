@@ -85,8 +85,15 @@ public class MazeSolver : MonoBehaviour
                 }
             }
         }
+        
 
         // 큐가 빌 때까지 도착 못했으면 길이 막힌 것
         return false;
+    }
+    public void UnblockNode(Vector3 worldPos)
+    {
+        Vector2Int gridPos = WorldToGrid(worldPos);
+        // 범위 체크 후 false(안 막힘)로 변경
+        if (IsValid(gridPos)) blockedGrid[gridPos.x, gridPos.y] = false;
     }
 }

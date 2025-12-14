@@ -141,7 +141,7 @@ GameObject:
   - component: {fileID: 8064967368848701606}
   - component: {fileID: 7430286430303164239}
   m_Layer: 6
-  m_Name: Enemy
+  m_Name: Enemy 1
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -196,7 +196,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 1e446f6d3a58ffc44a54adc338d55a59, type: 2}
+  - {fileID: 2100000, guid: 2d30131f0a644c74791ead08839ba053, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -252,7 +252,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 1
+  m_Speed: 6
   m_Acceleration: 1000
   avoidancePriority: 50
   m_AngularSpeed: 360
@@ -288,8 +288,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b3ee2f9c5cb518449fc1ebc872897b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHP
-  maxHP: 500
-  killReward: 10
+  maxHP: 1000
+  killReward: 20
   hpSlider: {fileID: 6855513590112984098}
   floatingTextPrefab: {fileID: 6785841157678952137, guid: 172e47aba17d3d94dbe2edb78924e7fd, type: 3}
 --- !u!1 &4994231211390059093
