@@ -40,13 +40,22 @@ public class EnemyHP : MonoBehaviour
     void Die()
     {
         GameManager.Instance.AddMoney(killReward);
+        
         if (floatingTextPrefab != null)
         {
-            // 적의 현재 위치에 생성하되, 높이(Y)를 조금 올려서(1.0f) 잘 보이게 함
             Vector3 spawnPos = transform.position + new Vector3(0, 1.5f, 0);
             
-            // 생성! (Quaternion.identity 대신 프리팹 자체의 회전값 사용)
-            Instantiate(floatingTextPrefab, spawnPos, floatingTextPrefab.transform.rotation);
+            // 1. 생성된 오브젝트를 변수(go)에 담습니다.
+            GameObject go = Instantiate(floatingTextPrefab, spawnPos, floatingTextPrefab.transform.rotation);
+
+            // 2. [핵심] 자식들 중에 숨어있는 Text 컴포넌트를 찾습니다.
+            Text textComp = go.GetComponentInChildren<Text>();
+
+            // 3. 찾았다면 내용을 killReward로 바꿔치기 합니다.
+            if (textComp != null)
+            {
+                textComp.text = $"+{killReward}G"; 
+            }
         }
         Destroy(gameObject); 
     }

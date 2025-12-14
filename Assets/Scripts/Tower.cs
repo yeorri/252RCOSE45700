@@ -14,10 +14,11 @@ public class Tower : MonoBehaviour
     [Header("필수 연결")]
     public GameObject bulletPrefab; // 총알 프리팹
     public Transform firePoint;     // 총알 나가는 위치 (머리 끝)
-    public GameObject rangeIndicator;
+    public GameObject rangeIndicator; // 사거리 표시용 구체
+    public Outline towerOutline;      // [추가] 아웃라인 컴포넌트 (Quick Outline 에셋)
 
     [Header("업그레이드 상승폭")]
-    public float damageStep = 500f;
+    public float damageStep = 5f;   // (테스트용 500f -> 5f로 정상화)
     public float rangeStep = 0.5f;
     public float rateStep = 0.2f;
 
@@ -26,13 +27,16 @@ public class Tower : MonoBehaviour
     [HideInInspector] public int levelRange = 1;
     [HideInInspector] public int levelRate = 1;
 
-    // [추가] 내가 깔고 앉은 타일 기억하기
+    // 내가 깔고 앉은 타일 기억하기
     [HideInInspector] public GridTile ownedTile;
 
     // 내부 변수
     private Transform target;
     private float fireCountdown = 0f;
-    public int totalSpentMoney = 0; // public으로 변경 (UpgradeMenu에서 접근하기 편하게)
+    public int totalSpentMoney = 0; 
+
+    // [추가] 현재 선택된 상태인지 기억하는 변수
+    private bool isSelected = false;
 
     void Start()
     {
@@ -41,7 +45,7 @@ public class Tower : MonoBehaviour
         InvokeRepeating("UpdateTarget", 0f, 0.5f);
     }
 
-    // --- [삭제되었던 공격 로직 복구] ---
+    // --- 공격 로직 ---
 
     void UpdateTarget()
     {
@@ -73,12 +77,7 @@ public class Tower : MonoBehaviour
     {
         if (target == null) return;
 
-        // 타겟을 바라보게 회전 (선택 사항)
-        // Vector3 dir = target.position - transform.position;
-        // Quaternion lookRotation = Quaternion.LookRotation(dir);
-        // Vector3 rotation = Quaternion.Lerp(transform.rotation, lookRotation, Time.deltaTime * 10f).eulerAngles;
-        // transform.rotation = Quaternion.Euler(0f, rotation.y, 0f);
-
+        // 공격 쿨타임 계산
         if (fireCountdown <= 0f)
         {
             Shoot();
@@ -102,12 +101,15 @@ public class Tower : MonoBehaviour
         }
     }
 
+    // --- 시각화 (사거리 & 아웃라인) ---
+
     // 사거리 표시 (디버그용)
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, range);
     }
+
     // 사거리 표시 (인게임용)
     public void ShowRange()
     {
@@ -117,6 +119,7 @@ public class Tower : MonoBehaviour
             rangeIndicator.transform.localScale = Vector3.one * range * 2f;
         }
     }
+
     public void HideRange()
     {   
         if (rangeIndicator != null)
@@ -125,7 +128,57 @@ public class Tower : MonoBehaviour
         }
     }
 
-    // --- [업그레이드 및 판매 로직] ---
+    // [추가] 외부(UpgradeMenu)에서 선택 상태를 설정할 때 호출
+    public void SetSelectionState(bool selected)
+    {
+        isSelected = selected;
+        // 선택되면 켜고, 해제되면 끔
+        ToggleHighlight(selected);
+    }
+
+    // [추가] 내부적으로 아웃라인을 껐다 켜는 함수
+    private void ToggleHighlight(bool isOn)
+    {
+        if (towerOutline != null)
+        {
+            towerOutline.enabled = isOn;
+        }
+    }
+
+    // --- 마우스 상호작용 (Hover & Click) ---
+
+    // 마우스가 타워 위에 올라왔을 때 (Hover)
+    void OnMouseEnter()
+    {
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
+        
+        // 마우스 올리면 무조건 하이라이트 ON
+        ToggleHighlight(true);
+    }
+
+    // 마우스가 타워에서 나갔을 때
+    void OnMouseExit()
+    {
+        // "선택된 상태(isSelected)"가 아닐 때만 하이라이트를 끔
+        // 선택되어 있다면 마우스가 나가도 하이라이트 유지
+        if (!isSelected)
+        {
+            ToggleHighlight(false);
+        }
+    }
+
+    // 타워 클릭 시
+    void OnMouseDown()
+    {
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
+        
+        if (UpgradeMenu.Instance != null)
+        {
+            UpgradeMenu.Instance.SelectTower(this);
+        }
+    }
+
+    // --- 업그레이드 및 판매 로직 ---
 
     public int GetDamageUpgradeCost() { return levelDamage * 10; }
     public int GetRangeUpgradeCost() { return levelRange * 10; }
@@ -147,9 +200,16 @@ public class Tower : MonoBehaviour
         int cost = GetRangeUpgradeCost();
         if (GameManager.Instance.SpendMoney(cost))
         {
+            // 1. 수치 증가
             range += rangeStep;
             totalSpentMoney += cost;
             levelRange++;
+            
+            // 2. [추가] 사거리 표시가 켜져 있다면, 즉시 크기 갱신!
+            if (rangeIndicator != null && rangeIndicator.activeInHierarchy)
+            {
+                ShowRange(); // 이 함수가 변경된 range 값으로 크기를 다시 맞춥니다.
+            }
         }
     }
 
@@ -173,21 +233,12 @@ public class Tower : MonoBehaviour
     {
         GameManager.Instance.AddMoney(GetSellPrice());
         MazeSolver.Instance.UnblockNode(transform.position); // 길 뚫기
-        // 3. [핵심] 타일 상태 초기화! (이제 다시 지을 수 있음)
+        
+        // 타일 상태 초기화
         if (ownedTile != null)
         {
             ownedTile.isOccupied = false;
         }
         Destroy(gameObject);
-    }
-
-    void OnMouseDown()
-    {
-        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
-        
-        if (UpgradeMenu.Instance != null)
-        {
-            UpgradeMenu.Instance.SelectTower(this);
-        }
     }
 }

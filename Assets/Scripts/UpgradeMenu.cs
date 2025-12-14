@@ -20,28 +20,45 @@ public class UpgradeMenu : MonoBehaviour
 
     public void SelectTower(Tower tower)
     {
-        // 이전 타워의 정보를 끄고 새로운 타워를 선택하기 전에 호출
+        // 1. 이전에 선택된 타워가 있다면? -> 선택 해제 및 하이라이트 끄기
         if (selectedTower != null)
         {
-            selectedTower.HideRange(); // <--- 이전 타워의 사거리 끄기
+            selectedTower.HideRange();
+            selectedTower.SetSelectionState(false); // [중요] 이전 타워에게 "너 이제 선택 풀렸어"라고 알림
         }
+
         selectedTower = tower;
-        tower.ShowRange();
-        // 메뉴 위치: 타워 머리 위
-        transform.position = tower.transform.position + Vector3.up * 2f + Vector3.right * 3f + Vector3.forward * 1.7f;
+
+        // 2. 새로 선택된 타워 -> 하이라이트 켜기
+        selectedTower.ShowRange();
+        selectedTower.SetSelectionState(true); // [중요] 새 타워에게 "너 선택됐어!"라고 알림 (이게 있어야 유지됨!)
+
+        // 메뉴 위치 잡기
+        transform.position = tower.transform.position + Vector3.up * 1.5f + Vector3.right * 2f; 
+        
         UpdateBtnUI();
-        TowerInfoPanel.Instance.ShowInfo(tower);
+        
+        // 정보창 갱신 (TowerInfoPanel이 있다면)
+        if (TowerInfoPanel.Instance != null)
+        {
+            TowerInfoPanel.Instance.ShowInfo(tower);
+        }
+            
         gameObject.SetActive(true);
     }
 
     public void CloseMenu()
     {
+        // 메뉴 닫을 때 선택 해제
         if (selectedTower != null)
         {
-            selectedTower.HideRange(); 
+            selectedTower.HideRange();
+            selectedTower.SetSelectionState(false); // [중요] 닫을 때도 하이라이트 꺼줌
         }
+
         selectedTower = null;
         gameObject.SetActive(false);
+        
         if (TowerInfoPanel.Instance != null)
             TowerInfoPanel.Instance.HideInfo();
     }
@@ -50,20 +67,56 @@ public class UpgradeMenu : MonoBehaviour
     {
         if (selectedTower == null) return;
 
-        // 버튼 텍스트 (연결 안됐을 경우를 대비해 null 체크)
+        // 버튼 텍스트 갱신
         if(damageBtnText) damageBtnText.text = $"Dmg Up ({selectedTower.GetDamageUpgradeCost()}G)";
         if(rangeBtnText) rangeBtnText.text = $"Rng Up ({selectedTower.GetRangeUpgradeCost()}G)";
         if(rateBtnText) rateBtnText.text = $"Spd Up ({selectedTower.GetRateUpgradeCost()}G)";
-        
-        // 판매 버튼
         if(sellBtnText) sellBtnText.text = $"Sell (+{selectedTower.GetSellPrice()}G)";
-        TowerInfoPanel.Instance.ShowInfo(selectedTower);
     }
 
     // --- 버튼 연결 함수 ---
-    public void OnClickDamage() { if (selectedTower) { selectedTower.UpgradeDamage(); UpdateBtnUI(); } }
-    public void OnClickRange() { if (selectedTower) { selectedTower.UpgradeRange(); UpdateBtnUI();  } }
-    public void OnClickRate() { if (selectedTower) { selectedTower.UpgradeRate(); UpdateBtnUI(); } }
-    public void OnClickSell() { if (selectedTower) { selectedTower.SellTower(); CloseMenu(); } }
-    public void OnClickClose() { if (selectedTower) { CloseMenu(); }}
+    public void OnClickDamage() 
+    { 
+        if (selectedTower) 
+        { 
+            selectedTower.UpgradeDamage(); 
+            UpdateBtnUI(); 
+            if(TowerInfoPanel.Instance != null) TowerInfoPanel.Instance.ShowInfo(selectedTower);
+        } 
+    }
+
+    public void OnClickRange() 
+    { 
+        if (selectedTower) 
+        { 
+            selectedTower.UpgradeRange(); 
+            UpdateBtnUI(); 
+            if(TowerInfoPanel.Instance != null) TowerInfoPanel.Instance.ShowInfo(selectedTower);
+        } 
+    }
+
+    public void OnClickRate() 
+    { 
+        if (selectedTower) 
+        { 
+            selectedTower.UpgradeRate(); 
+            UpdateBtnUI(); 
+            if(TowerInfoPanel.Instance != null) TowerInfoPanel.Instance.ShowInfo(selectedTower);
+        } 
+    }
+
+    public void OnClickSell() 
+    { 
+        if (selectedTower) 
+        { 
+            selectedTower.SellTower(); 
+            CloseMenu(); 
+        } 
+    }
+    
+    // 닫기 버튼용 (혹시 만드셨다면)
+    public void OnClickClose() 
+    { 
+        CloseMenu(); 
+    }
 }
