@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UpgradeMenu : MonoBehaviour
 {
@@ -7,10 +8,10 @@ public class UpgradeMenu : MonoBehaviour
     private Tower selectedTower;
 
     [Header("UI 텍스트 연결")]
-    public Text damageBtnText;
-    public Text rangeBtnText;
-    public Text rateBtnText;
-    public Text sellBtnText;
+    public TextMeshProUGUI damageBtnText;
+    public TextMeshProUGUI rangeBtnText;
+    public TextMeshProUGUI rateBtnText;
+    public TextMeshProUGUI sellBtnText;
 
     void Awake()
     {
@@ -34,7 +35,7 @@ public class UpgradeMenu : MonoBehaviour
         selectedTower.SetSelectionState(true); // [중요] 새 타워에게 "너 선택됐어!"라고 알림 (이게 있어야 유지됨!)
 
         // 메뉴 위치 잡기
-        transform.position = tower.transform.position + Vector3.up * 1.5f + Vector3.right * 2f; 
+        transform.position = tower.transform.position + Vector3.up * 1f + Vector3.right * 2f; 
         
         UpdateBtnUI();
         
@@ -42,6 +43,8 @@ public class UpgradeMenu : MonoBehaviour
         if (TowerInfoPanel.Instance != null)
         {
             TowerInfoPanel.Instance.ShowInfo(tower);
+            TowerInfoPanel.Instance.transform.position = tower.transform.position + Vector3.up * 1f + Vector3.left * 2f;
+            TowerInfoPanel.Instance.transform.rotation = transform.rotation;
         }
             
         gameObject.SetActive(true);
@@ -68,9 +71,9 @@ public class UpgradeMenu : MonoBehaviour
         if (selectedTower == null) return;
 
         // 버튼 텍스트 갱신
-        if(damageBtnText) damageBtnText.text = $"Dmg Up ({selectedTower.GetDamageUpgradeCost()}G)";
-        if(rangeBtnText) rangeBtnText.text = $"Rng Up ({selectedTower.GetRangeUpgradeCost()}G)";
-        if(rateBtnText) rateBtnText.text = $"Spd Up ({selectedTower.GetRateUpgradeCost()}G)";
+        if(damageBtnText) damageBtnText.text = $"Damage Up ({selectedTower.GetDamageUpgradeCost()}G)";
+        if(rangeBtnText) rangeBtnText.text = $"Range Up ({selectedTower.GetRangeUpgradeCost()}G)";
+        if(rateBtnText) rateBtnText.text = $"Speed Up ({selectedTower.GetRateUpgradeCost()}G)";
         if(sellBtnText) sellBtnText.text = $"Sell (+{selectedTower.GetSellPrice()}G)";
     }
 

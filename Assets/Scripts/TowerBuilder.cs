@@ -11,8 +11,9 @@ public class TowerBuilder : MonoBehaviour
 
     [Header("맵 생성 정보")]
     public int width = 20;
-    public int height = 20;
-    public float offset = 10f;
+    public int height = 10;
+    public float widthOffset = 10f;
+    public float heightOffset = 5f;
 
     [Header("참조")]
     public Transform towerContainer;
@@ -38,8 +39,8 @@ public class TowerBuilder : MonoBehaviour
         {
             for (int z = 0; z < height; z++)
             {
-                float worldX = x - offset + 0.5f;
-                float worldZ = z - offset + 0.5f;
+                float worldX = x - widthOffset + 0.5f;
+                float worldZ = z - heightOffset + 0.5f;
                 Vector3 pos = new Vector3(worldX, 0.05f, worldZ); 
 
                 GameObject tileObj = Instantiate(gridTilePrefab, pos, Quaternion.Euler(90, 0, 0), tileContainer);

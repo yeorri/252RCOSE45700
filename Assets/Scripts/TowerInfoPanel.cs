@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class TowerInfoPanel : MonoBehaviour
 {
@@ -8,8 +9,8 @@ public class TowerInfoPanel : MonoBehaviour
 
     [Header("UI 연결")]
     public GameObject panelObj; // 패널 전체 (껏다 켰다 하기 위함)
-    public Text nameText;
-    public Text statText; // 데미지, 사거리 등을 한 번에 보여주거나 따로 만드셔도 됩니다.
+    public TextMeshProUGUI nameText;
+    public TextMeshProUGUI statText; // 데미지, 사거리 등을 한 번에 보여주거나 따로 만드셔도 됩니다.
 
     void Awake()
     {

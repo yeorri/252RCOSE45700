@@ -7,8 +7,9 @@ public class MazeSolver : MonoBehaviour
 
     [Header("맵 설정 (Plane Scale X:2, Z:2 기준)")]
     public int gridWidth = 20;
-    public int gridHeight = 20;
-    public float offset = 10f; // 좌표 보정값 (-10 ~ 10을 0 ~ 20으로 변환)
+    public int gridHeight = 10;
+    public float widthOffset = 10f; // 좌표 보정값 (-10 ~ 10을 0 ~ 20으로 변환)
+    public float heightOffset = 5f;
 
     // 타워가 어디에 있는지 기억하는 가상 지도 (true면 막힘)
     private bool[,] blockedGrid;
@@ -23,8 +24,8 @@ public class MazeSolver : MonoBehaviour
     // 좌표를 그리드 인덱스로 변환 (예: -9.5 -> 0)
     public Vector2Int WorldToGrid(Vector3 worldPos)
     {
-        int x = Mathf.FloorToInt(worldPos.x + offset);
-        int y = Mathf.FloorToInt(worldPos.z + offset);
+        int x = Mathf.FloorToInt(worldPos.x + widthOffset);
+        int y = Mathf.FloorToInt(worldPos.z + heightOffset);
         return new Vector2Int(x, y);
     }
 

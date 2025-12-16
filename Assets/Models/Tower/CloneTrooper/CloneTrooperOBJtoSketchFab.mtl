@@ -1,0 +1,133 @@
+# OBJ Material Export by Luxion KeyShot
+
+newmtl Anodized Rough Black #9
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Chest
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Negro
+Kd 0.000134741 0.000134741 0.000134741
+Ks 0 0 0
+
+newmtl model:Undies
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Waist
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Belt
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Helmet_Base
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Armor_White
+Kd 0.6 0.6 0.6
+Ks 0 0 0
+
+newmtl model:Visor
+Kd 0 0 0
+Ks 0.167742 0.167742 0.167742
+
+newmtl model:Negro
+Kd 0.000134741 0.000134741 0.000134741
+Ks 0 0 0
+
+newmtl model:Shoulder1
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Hand1
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:PreArm1
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Arm1
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Elbow1
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Negro
+Kd 0.000134741 0.000134741 0.000134741
+Ks 0 0 0
+
+newmtl model:Elbow1
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Shoulder1
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Hand1
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:PreArm1
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Arm1
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Belt
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Negro
+Kd 0.000134741 0.000134741 0.000134741
+Ks 0 0 0
+
+newmtl model:Knee1
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Leg2_1
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Leg1_1
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Belt
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Negro
+Kd 0.000134741 0.000134741 0.000134741
+Ks 0 0 0
+
+newmtl model:Knee2
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Leg2_2
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Leg1_2
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Belt
+Kd 0 0 0
+Ks 0 0 0
+
+newmtl model:Negro
+Kd 0.000134741 0.000134741 0.000134741
+Ks 0 0 0

@@ -1,9 +1,10 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Tower : MonoBehaviour
 {
     [Header("타워 기본 정보")]
-    public string towerName = "Basic Tower";
+    public string towerName;
     public int baseCost = 30;
 
     [Header("공격 설정")]
@@ -16,6 +17,8 @@ public class Tower : MonoBehaviour
     public Transform firePoint;     // 총알 나가는 위치 (머리 끝)
     public GameObject rangeIndicator; // 사거리 표시용 구체
     public Outline towerOutline;      // [추가] 아웃라인 컴포넌트 (Quick Outline 에셋)
+
+    public GameObject floatingTextPrefab;
 
     [Header("업그레이드 상승폭")]
     public float damageStep = 5f;   // (테스트용 500f -> 5f로 정상화)
@@ -40,6 +43,7 @@ public class Tower : MonoBehaviour
 
     void Start()
     {
+        towerName = gameObject.name.Replace("(Clone)", "").Trim();
         totalSpentMoney = baseCost;
         // 0.5초마다 타겟을 다시 찾음 (최적화)
         InvokeRepeating("UpdateTarget", 0f, 0.5f);
@@ -192,6 +196,7 @@ public class Tower : MonoBehaviour
             damage += damageStep;
             totalSpentMoney += cost;
             levelDamage++;
+            ShowFloatingText("Dmg Up", Color.red);
         }
     }
 
@@ -210,6 +215,7 @@ public class Tower : MonoBehaviour
             {
                 ShowRange(); // 이 함수가 변경된 range 값으로 크기를 다시 맞춥니다.
             }
+            ShowFloatingText("Range Up", Color.cyan);
         }
     }
 
@@ -221,9 +227,28 @@ public class Tower : MonoBehaviour
             fireRate += rateStep;
             totalSpentMoney += cost;
             levelRate++;
+            ShowFloatingText("Spd Up", Color.green);
         }
     }
-
+    void ShowFloatingText(string message, Color color)
+    {
+        if (floatingTextPrefab != null)
+        {
+            // 타워 머리 위(높이 2.5f 정도)에 생성
+            Vector3 spawnPos = transform.position + Vector3.up * 2.5f; 
+            
+            // 1. 생성
+            GameObject go = Instantiate(floatingTextPrefab, spawnPos, floatingTextPrefab.transform.rotation);
+            
+            // 2. 텍스트 변경
+            Text textComp = go.GetComponentInChildren<Text>();
+            if (textComp != null)
+            {
+                textComp.text = message;
+                textComp.color = color; // 색상도 바꿔줍니다!
+            }
+        }
+    }
     public int GetSellPrice()
     {
         return Mathf.RoundToInt(totalSpentMoney * 0.7f);

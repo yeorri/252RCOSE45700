@@ -10,8 +10,8 @@ public class EnemyMove : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
 
-        // 이걸 끄면 Agent는 이동은 하되, 몸통 방향(Rotation)은 바꾸지 않습니다. 체력바 고정을 위한 장치
-        agent.updateRotation = false;
+        
+        //agent.updateRotation = false;
         
         GameObject targetObj = GameObject.Find("Goal");
         if (targetObj != null)
@@ -27,7 +27,7 @@ public class EnemyMove : MonoBehaviour
         if (agent.pathPending) return;
 
         // 1차 체크: NavMeshAgent가 멈췄는가?
-        if (agent.remainingDistance <= 0.2f)
+        if (agent.remainingDistance <= 1f)
         {
             // [중요 수정!] 2차 체크: 진짜 목표 지점 근처에 있는가?
             // "내 위치"와 "목표 위치" 사이의 거리가 1.0f보다 작을 때만 도착으로 인정
