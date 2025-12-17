@@ -39,6 +39,9 @@ public class Tower : MonoBehaviour
 
     // [추가] 최적화를 위한 타겟 검색 쿨타임 변수
     private float searchCountdown = 0f;
+    public LayerMask enemyLayer;
+    public Transform partToRotate;
+    public float turnSpeed = 10;
 
     void Start()
     {
@@ -77,6 +80,7 @@ public class Tower : MonoBehaviour
         // 3. 타겟이 있다면? -> 공격
         if (target != null)
         {
+            LockOnTarget();
             // 공격 쿨타임 계산
             if (fireCountdown <= 0f)
             {
@@ -86,28 +90,52 @@ public class Tower : MonoBehaviour
             fireCountdown -= Time.deltaTime;
         }
     }
+    void LockOnTarget()
+    {
+        // 1. 적이 있는 방향 벡터 구하기
+        Vector3 dir = target.position - transform.position;
+
+        // [최적화] 적과 나의 각도 차이가 5도 미만이면 회전 계산 건너뜀
+        if (Vector3.Angle(partToRotate.forward, dir) < 5f) return;
+
+        // 2. 그 방향을 바라보는 회전값(Quaternion) 계산
+        Quaternion lookRotation = Quaternion.LookRotation(dir);
+
+        // 3. 부드럽게 회전시키기 (Lerp 사용)
+        // partToRotate가 없다면 transform(자기자신)을 회전
+        Transform rotationTarget = partToRotate != null ? partToRotate : transform;
+        
+        Vector3 rotation = Quaternion.Lerp(rotationTarget.rotation, lookRotation, Time.deltaTime * turnSpeed).eulerAngles;
+
+        // 4. Y축(좌우)으로만 돌리고, X/Z축(위아래/기울기)은 고정
+        // (안 그러면 적이 높거나 낮을 때 타워가 이상하게 기울어집니다)
+        rotationTarget.rotation = Quaternion.Euler(0f, rotation.y, 0f);
+    }
 
     // [변경] 이름 변경: UpdateTarget -> FindNearestTarget
     // 가장 가까운 적을 찾아서 target 변수에 할당하는 역할만 함
+    // [중요] Inspector에서 이 변수에 'Enemy' 레이어를 꼭 선택해줘야 합니다! 
     void FindNearestTarget()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        float shortestDistance = Mathf.Infinity;
+        // 1. 수정됨: enemies inRange -> enemiesInRange (띄어쓰기 제거)
+        Collider[] enemiesInRange = Physics.OverlapSphere(transform.position, range, enemyLayer);
+        
+        float shortestDistanceSqr = Mathf.Infinity;
         GameObject nearestEnemy = null;
 
-        foreach (GameObject enemy in enemies)
+        foreach (Collider enemyCollider in enemiesInRange)
         {
-            float distanceToEnemy = Vector3.Distance(transform.position, enemy.transform.position);
+            if (!enemyCollider.CompareTag("Enemy")) continue;
             
-            // 사거리 안에 있는 적 중에서 제일 가까운 놈 찾기
-            if (distanceToEnemy <= range && distanceToEnemy < shortestDistance)
+            float distanceSqr = (transform.position - enemyCollider.transform.position).sqrMagnitude;
+
+            if (distanceSqr < shortestDistanceSqr)
             {
-                shortestDistance = distanceToEnemy;
-                nearestEnemy = enemy;
+                shortestDistanceSqr = distanceSqr;
+                nearestEnemy = enemyCollider.gameObject;
             }
         }
 
-        // 찾은 적이 있으면 타겟으로 설정
         if (nearestEnemy != null)
         {
             target = nearestEnemy.transform;
