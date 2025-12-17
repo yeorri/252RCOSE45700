@@ -10,7 +10,9 @@ public class GameManager : MonoBehaviour
     public int startMoney = 100;
 
     [Header("UI 연결")]
-    public GameObject gameOverUI; // 게임 오버 패널을 여기에 연결할 겁니다.
+    public GameObject gameOverUI;
+    public GameObject victoryUI; 
+    private bool isVictory = false;
 
     [Header("현재 상태")]
     public int lives;
@@ -63,6 +65,19 @@ public class GameManager : MonoBehaviour
             return true;
         }
         return false;
+    }
+    public void WinGame()
+    {
+        if (isVictory) return; // 이미 끝났으면 무시
+        isVictory = true;
+
+        Debug.Log("모든 웨이브 클리어! 승리!");
+        
+        if (victoryUI != null)
+        {
+            victoryUI.SetActive(true); // 승리 패널 켜기!
+            Time.timeScale = 0f; // 게임 정지 (선택 사항)
+        }
     }
 
     void EndGame()

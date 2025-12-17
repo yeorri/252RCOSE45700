@@ -7,7 +7,7 @@ public class TowerBuilder : MonoBehaviour
 
     [Header("설정")]
     public GameObject gridTilePrefab; // 타일 프리팹
-    public BuildMenu buildMenu;       // 메뉴 UI
+    public TowerBuildMenu buildMenu;       // 메뉴 UI
 
     [Header("맵 생성 정보")]
     public int width = 20;

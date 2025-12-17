@@ -8,20 +8,19 @@ public class Tower : MonoBehaviour
     public int baseCost = 30;
 
     [Header("공격 설정")]
-    public float range = 5f;       // 사거리
-    public float damage = 10f;     // 데미지
-    public float fireRate = 1f;    // 초당 발사 속도
+    public float range = 5f;       
+    public float damage = 10f;     
+    public float fireRate = 1f;    
     
     [Header("필수 연결")]
-    public GameObject bulletPrefab; // 총알 프리팹
-    public Transform firePoint;     // 총알 나가는 위치 (머리 끝)
-    public GameObject rangeIndicator; // 사거리 표시용 구체
-    public Outline towerOutline;      // [추가] 아웃라인 컴포넌트 (Quick Outline 에셋)
-
+    public GameObject bulletPrefab; 
+    public Transform firePoint;     
+    public GameObject rangeIndicator; 
+    public Outline towerOutline;      
     public GameObject floatingTextPrefab;
 
     [Header("업그레이드 상승폭")]
-    public float damageStep = 5f;   // (테스트용 500f -> 5f로 정상화)
+    public float damageStep = 5f;   
     public float rangeStep = 0.5f;
     public float rateStep = 0.2f;
 
@@ -30,28 +29,67 @@ public class Tower : MonoBehaviour
     [HideInInspector] public int levelRange = 1;
     [HideInInspector] public int levelRate = 1;
 
-    // 내가 깔고 앉은 타일 기억하기
     [HideInInspector] public GridTile ownedTile;
 
     // 내부 변수
     private Transform target;
     private float fireCountdown = 0f;
     public int totalSpentMoney = 0; 
-
-    // [추가] 현재 선택된 상태인지 기억하는 변수
     private bool isSelected = false;
+
+    // [추가] 최적화를 위한 타겟 검색 쿨타임 변수
+    private float searchCountdown = 0f;
 
     void Start()
     {
         towerName = gameObject.name.Replace("(Clone)", "").Trim();
         totalSpentMoney = baseCost;
-        // 0.5초마다 타겟을 다시 찾음 (최적화)
-        InvokeRepeating("UpdateTarget", 0f, 0.5f);
+        
+        // [변경] InvokeRepeating 제거함.
+        // 이제 Update에서 직접 로직을 제어합니다.
     }
 
-    // --- 공격 로직 ---
+    // --- 공격 및 타겟팅 로직 (핵심 변경 부분) ---
 
-    void UpdateTarget()
+    void Update()
+    {
+        // 1. 현재 타겟이 유효한지 검사 (거리 & 생존 여부)
+        if (target != null)
+        {
+            // 타겟이 비활성화(죽음) 되었거나, 사거리를 벗어났는지 매 프레임 체크
+            if (!target.gameObject.activeInHierarchy || Vector3.Distance(transform.position, target.position) > range)
+            {
+                target = null; // 타겟 놓아줌
+            }
+        }
+
+        // 2. 타겟이 없다면? -> 새로운 타겟 검색 (0.2초마다 시도 - 최적화)
+        if (target == null)
+        {
+            searchCountdown -= Time.deltaTime;
+            if (searchCountdown <= 0f)
+            {
+                FindNearestTarget();
+                searchCountdown = 0.2f; // 검색 주기는 0.2초로 설정
+            }
+        }
+
+        // 3. 타겟이 있다면? -> 공격
+        if (target != null)
+        {
+            // 공격 쿨타임 계산
+            if (fireCountdown <= 0f)
+            {
+                Shoot();
+                fireCountdown = 1f / fireRate;
+            }
+            fireCountdown -= Time.deltaTime;
+        }
+    }
+
+    // [변경] 이름 변경: UpdateTarget -> FindNearestTarget
+    // 가장 가까운 적을 찾아서 target 변수에 할당하는 역할만 함
+    void FindNearestTarget()
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         float shortestDistance = Mathf.Infinity;
@@ -60,35 +98,20 @@ public class Tower : MonoBehaviour
         foreach (GameObject enemy in enemies)
         {
             float distanceToEnemy = Vector3.Distance(transform.position, enemy.transform.position);
-            if (distanceToEnemy < shortestDistance)
+            
+            // 사거리 안에 있는 적 중에서 제일 가까운 놈 찾기
+            if (distanceToEnemy <= range && distanceToEnemy < shortestDistance)
             {
                 shortestDistance = distanceToEnemy;
                 nearestEnemy = enemy;
             }
         }
 
-        if (nearestEnemy != null && shortestDistance <= range)
+        // 찾은 적이 있으면 타겟으로 설정
+        if (nearestEnemy != null)
         {
             target = nearestEnemy.transform;
         }
-        else
-        {
-            target = null;
-        }
-    }
-
-    void Update()
-    {
-        if (target == null) return;
-
-        // 공격 쿨타임 계산
-        if (fireCountdown <= 0f)
-        {
-            Shoot();
-            fireCountdown = 1f / fireRate;
-        }
-
-        fireCountdown -= Time.deltaTime;
     }
 
     void Shoot()
@@ -107,14 +130,12 @@ public class Tower : MonoBehaviour
 
     // --- 시각화 (사거리 & 아웃라인) ---
 
-    // 사거리 표시 (디버그용)
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, range);
     }
 
-    // 사거리 표시 (인게임용)
     public void ShowRange()
     {
         if (rangeIndicator != null)
@@ -132,15 +153,12 @@ public class Tower : MonoBehaviour
         }
     }
 
-    // [추가] 외부(UpgradeMenu)에서 선택 상태를 설정할 때 호출
     public void SetSelectionState(bool selected)
     {
         isSelected = selected;
-        // 선택되면 켜고, 해제되면 끔
         ToggleHighlight(selected);
     }
 
-    // [추가] 내부적으로 아웃라인을 껐다 켜는 함수
     private void ToggleHighlight(bool isOn)
     {
         if (towerOutline != null)
@@ -151,27 +169,21 @@ public class Tower : MonoBehaviour
 
     // --- 마우스 상호작용 (Hover & Click) ---
 
-    // 마우스가 타워 위에 올라왔을 때 (Hover)
     void OnMouseEnter()
     {
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
-        
-        // 마우스 올리면 무조건 하이라이트 ON
+        Debug.Log("마우스 인식 성공! " + gameObject.name);
         ToggleHighlight(true);
     }
 
-    // 마우스가 타워에서 나갔을 때
     void OnMouseExit()
     {
-        // "선택된 상태(isSelected)"가 아닐 때만 하이라이트를 끔
-        // 선택되어 있다면 마우스가 나가도 하이라이트 유지
         if (!isSelected)
         {
             ToggleHighlight(false);
         }
     }
 
-    // 타워 클릭 시
     void OnMouseDown()
     {
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
@@ -205,15 +217,13 @@ public class Tower : MonoBehaviour
         int cost = GetRangeUpgradeCost();
         if (GameManager.Instance.SpendMoney(cost))
         {
-            // 1. 수치 증가
             range += rangeStep;
             totalSpentMoney += cost;
             levelRange++;
             
-            // 2. [추가] 사거리 표시가 켜져 있다면, 즉시 크기 갱신!
             if (rangeIndicator != null && rangeIndicator.activeInHierarchy)
             {
-                ShowRange(); // 이 함수가 변경된 range 값으로 크기를 다시 맞춥니다.
+                ShowRange(); 
             }
             ShowFloatingText("Range Up", Color.cyan);
         }
@@ -230,25 +240,22 @@ public class Tower : MonoBehaviour
             ShowFloatingText("Spd Up", Color.green);
         }
     }
+
     void ShowFloatingText(string message, Color color)
     {
         if (floatingTextPrefab != null)
         {
-            // 타워 머리 위(높이 2.5f 정도)에 생성
             Vector3 spawnPos = transform.position + Vector3.up * 2.5f; 
-            
-            // 1. 생성
             GameObject go = Instantiate(floatingTextPrefab, spawnPos, floatingTextPrefab.transform.rotation);
-            
-            // 2. 텍스트 변경
             Text textComp = go.GetComponentInChildren<Text>();
             if (textComp != null)
             {
                 textComp.text = message;
-                textComp.color = color; // 색상도 바꿔줍니다!
+                textComp.color = color; 
             }
         }
     }
+
     public int GetSellPrice()
     {
         return Mathf.RoundToInt(totalSpentMoney * 0.7f);
@@ -257,9 +264,8 @@ public class Tower : MonoBehaviour
     public void SellTower()
     {
         GameManager.Instance.AddMoney(GetSellPrice());
-        MazeSolver.Instance.UnblockNode(transform.position); // 길 뚫기
+        MazeSolver.Instance.UnblockNode(transform.position); 
         
-        // 타일 상태 초기화
         if (ownedTile != null)
         {
             ownedTile.isOccupied = false;

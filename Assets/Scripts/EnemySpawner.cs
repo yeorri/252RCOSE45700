@@ -37,7 +37,10 @@ public class EnemySpawner : MonoBehaviour
         // 3. 모든 웨이브가 끝났다면? (게임 클리어)
         if (currentWaveIndex >= waves.Length)
         {
-            Debug.Log("모든 웨이브 클리어! 승리!");
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.WinGame();
+            }
             this.enabled = false; // 스크립트 끄기
             return;
         }
