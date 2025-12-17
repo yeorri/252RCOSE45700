@@ -153,7 +153,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 550, y: 400}
+  m_AnchoredPosition: {x: 550, y: 450}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &45401217
@@ -480,6 +480,7 @@ MonoBehaviour:
   isGameOver: 0
   bgmSource: {fileID: 2041770923}
   victoryMusic: {fileID: 8300000, guid: c42f2d2cfa411f84db2b4f50a5e10814, type: 3}
+  gameOverMusic: {fileID: 8300000, guid: 3a6e3b09a03277d4c8afad914d9b2140, type: 3}
 --- !u!114 &314413156
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1496,19 +1497,19 @@ MonoBehaviour:
   waves:
   - waveName: Stage1
     enemyPrefab: {fileID: 2937823324019075854, guid: f4150906bb1bb81428aa2602bda44d45, type: 3}
-    count: 10
+    count: 20
     spawnRate: 1
   - waveName: Stage2
     enemyPrefab: {fileID: 2937823324019075854, guid: e34cbd55049762b428a162a1acc69055, type: 3}
-    count: 10
+    count: 20
     spawnRate: 1
   - waveName: Stage3
     enemyPrefab: {fileID: 2937823324019075854, guid: e46425930ed7f33478e57ebacdfb48e1, type: 3}
     count: 1
     spawnRate: 1
-  timeBetweenWaves: 10
+  timeBetweenWaves: 20
   enemyContainer: {fileID: 1873867731}
-  countdown: 10
+  countdown: 20
   currentWaveIndex: 0
 --- !u!4 &454402838
 Transform:
@@ -3466,7 +3467,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 464accb77e261c449bddcc864951cc5d, type: 2}
+  - {fileID: 2100000, guid: 34355098c57df444098a8e7af8ea4be3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3866,7 +3867,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 210, y: 400}
+  m_AnchoredPosition: {x: 150, y: 450}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1235371304
@@ -3945,7 +3946,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -600, y: 400}
+  m_AnchoredPosition: {x: -700, y: 450}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1238564716
@@ -4648,7 +4649,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 370, y: 400}
+  m_AnchoredPosition: {x: 350, y: 450}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1606890877

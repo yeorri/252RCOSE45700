@@ -35,7 +35,7 @@ public class UpgradeMenu : MonoBehaviour
         selectedTower.SetSelectionState(true); // [중요] 새 타워에게 "너 선택됐어!"라고 알림 (이게 있어야 유지됨!)
 
         // 메뉴 위치 잡기
-        transform.position = tower.transform.position + Vector3.up * 1f + Vector3.right * 2f; 
+        transform.position = tower.transform.position + Vector3.up * 3f + Vector3.right * 2f + Vector3.back * 1f; 
         
         UpdateBtnUI();
         
@@ -43,7 +43,7 @@ public class UpgradeMenu : MonoBehaviour
         if (TowerInfoPanel.Instance != null)
         {
             TowerInfoPanel.Instance.ShowInfo(tower);
-            TowerInfoPanel.Instance.transform.position = tower.transform.position + Vector3.up * 1f + Vector3.left * 2f;
+            TowerInfoPanel.Instance.transform.position = tower.transform.position + Vector3.up * 3f + Vector3.left * 2f + Vector3.back * 1f;
             TowerInfoPanel.Instance.transform.rotation = transform.rotation;
         }
             

@@ -14,6 +14,7 @@ public class GridTile : MonoBehaviour
 
     // 이번에 마우스 올렸을 때 여기가 안전했는지 기억하는 변수
     private bool isBuildSafe = false;
+    private bool isMenuOpen = false;
 
     void Start()
     {
@@ -21,11 +22,28 @@ public class GridTile : MonoBehaviour
         originalColor = rend.material.color;
     }
 
+    public void SetSelectionState(bool isOpen)
+    {
+        isMenuOpen = isOpen;
+
+        if (isMenuOpen)
+        {
+            // 메뉴가 열리면 강제로 초록색 유지
+            rend.material.color = hoverColor;
+        }
+        else
+        {
+            // 메뉴가 닫히면 원래 색으로 복구
+            rend.material.color = originalColor;
+        }
+    }
+
     // 마우스가 들어왔을 때 (미리 검사!)
     void OnMouseEnter()
     {
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
         if (isOccupied) return; // 이미 타워 있으면 무시
+        if (isMenuOpen) return;
 
         // 1. TowerBuilder에게 물어봅니다. "여기 길 막히나요?"
         // (마우스 올리는 순간 즉시 계산)
@@ -44,7 +62,10 @@ public class GridTile : MonoBehaviour
 
     void OnMouseExit()
     {
-        rend.material.color = originalColor; // 원래 색 복구
+        if (!isMenuOpen)
+        {
+            rend.material.color = originalColor; // 원래 색 복구
+        }
     }
 
     // 클릭했을 때
@@ -52,7 +73,8 @@ public class GridTile : MonoBehaviour
     {
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
         if (isOccupied) return;
-
+        
+        isBuildSafe = TowerBuilder.Instance.CheckPathSafety(myPosition);
         // 3. 아까 검사한 결과(isBuildSafe)를 보고 행동 결정
         if (isBuildSafe)
         {

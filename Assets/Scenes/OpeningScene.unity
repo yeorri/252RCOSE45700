@@ -390,25 +390,26 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Star Wars
-
-    Maze Tower Defense
+  m_text: 'EPISODE X
 
 
-    Long long time ago,
-
-    there
-    was a weapon called
-
-    "Death Star"
+    THE LAST LINE OF DEFENSE
 
 
-    Build your own maze with the towers
+    The Galaxy is in peril.
+    The evil Galactic Empire has constructed the ultimate weapon, the DEATH STAR.
+    However, the Rebel Alliance has successfully jammed its core systems, keeping
+    it dormant.
 
-    and
-    stop the enemies from
 
-    reaching "Death Star"...'
+    Now, the Imperial forces have launched a desperate assault
+    to reclaim the station and activate the weapon of mass destruction.
+
+
+    As
+    the Rebel Commander, you must hold the line. Construct a complex maze of defensive
+    towers to delay and destroy the approaching Imperial troops. You must stop them
+    from reaching the core... or the Galaxy is doomed.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -473,7 +474,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: -322.82666}
+  m_margin: {x: 0, y: 0, z: 0, w: -1608.0787}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1059,7 +1060,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -540}
+  m_AnchoredPosition: {x: 0, y: -300}
   m_SizeDelta: {x: 0, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1710182670

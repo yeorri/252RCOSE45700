@@ -37,11 +37,16 @@ public class Tower : MonoBehaviour
     public int totalSpentMoney = 0; 
     private bool isSelected = false;
 
+    [Header("타워 회전")]
     // [추가] 최적화를 위한 타겟 검색 쿨타임 변수
     private float searchCountdown = 0f;
     public LayerMask enemyLayer;
     public Transform partToRotate;
     public float turnSpeed = 10;
+
+    [Header("사운드 설정")]
+    public AudioSource sfxSource;     // 효과음을 낼 스피커
+    public AudioClip shootSound;      // 총 쏘는 소리 파일
 
     void Start()
     {
@@ -126,7 +131,7 @@ public class Tower : MonoBehaviour
         foreach (Collider enemyCollider in enemiesInRange)
         {
             if (!enemyCollider.CompareTag("Enemy")) continue;
-            
+
             float distanceSqr = (transform.position - enemyCollider.transform.position).sqrMagnitude;
 
             if (distanceSqr < shortestDistanceSqr)
@@ -153,6 +158,11 @@ public class Tower : MonoBehaviour
             {
                 bullet.Setup(target, damage); // 데미지 정보 전달
             }
+        }
+        if (sfxSource != null && shootSound != null)
+        {
+            // PlayOneShot은 소리가 겹쳐도 끊기지 않고 끝까지 재생됩니다.
+            sfxSource.PlayOneShot(shootSound);
         }
     }
 
