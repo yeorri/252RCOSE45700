@@ -19,6 +19,11 @@ public class GameManager : MonoBehaviour
     public int money;
     public bool isGameOver = false;
 
+    [Header("BGM 설정")]
+    public AudioSource bgmSource;      // 현재 배경음악 스피커
+    public AudioClip victoryMusic;  
+    public AudioClip gameOverMusic;   // 승리 시 재생할 음악 파일
+
     void Awake()
     {
         if (Instance != null)
@@ -68,6 +73,11 @@ public class GameManager : MonoBehaviour
     }
     public void WinGame()
     {
+        bgmSource.Stop();
+        bgmSource.clip = victoryMusic;
+        bgmSource.loop = true;
+        bgmSource.Play();
+
         if (isVictory) return; // 이미 끝났으면 무시
         isVictory = true;
 
@@ -82,6 +92,11 @@ public class GameManager : MonoBehaviour
 
     void EndGame()
     {
+        bgmSource.Stop();
+
+        bgmSource.clip = gameOverMusic;
+        bgmSource.loop = true;
+        bgmSource.Play();
         isGameOver = true;
         Debug.Log("게임 오버!");
 
