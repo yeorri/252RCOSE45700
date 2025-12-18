@@ -6,22 +6,42 @@ public class Bullet : MonoBehaviour
     private float speed = 20f; 
     private float damage = 20f;
 
+    // [추가] 총알이 타겟을 못 만나고 무한히 날아가는 것을 방지하기 위한 수명
+    private float lifeTime = 2f;
+    private float timer;
+
     public void Setup(Transform _target, float _damage)
     {
         target = _target;
         damage = _damage;
+        timer = 0f; // [추가] 활성화될 때마다 타이머 초기화
+    }
+
+    // [추가] 오브젝트 풀링에서 꺼내질 때 실행되는 함수
+    void OnEnable()
+    {
+        timer = 0f; // 타이머 리셋
     }
 
     void Update()
     {
-        if (target == null) 
+        // 1. 수명 체크 (타겟을 못 찾아도 일정 시간 뒤엔 풀로 반납)
+        timer += Time.deltaTime;
+        if (timer >= lifeTime)
         {
-            Destroy(gameObject); //target이 hp가 깎이든 도착해서든 없어지면 bullet 소멸
+            Deactivate();
             return;
         }
 
-        Vector3 dir = target.position - transform.position; //총알 방향 벡터 지속적 업데이트
-        float distanceThisFrame = speed * Time.deltaTime; // 프레임당 이동할 수 있는 거리
+        // 2. 타겟이 없어졌다면 풀로 반납
+        if (target == null || !target.gameObject.activeInHierarchy) 
+        {
+            Deactivate();
+            return;
+        }
+
+        Vector3 dir = target.position - transform.position;
+        float distanceThisFrame = speed * Time.deltaTime;
 
         if (dir.magnitude <= distanceThisFrame)
         {
@@ -35,12 +55,20 @@ public class Bullet : MonoBehaviour
 
     void HitTarget()
     {
-        // 최적화된 방식: 적의 체력 스크립트를 가져와서 데미지 줌
         EnemyHP enemyHealth = target.GetComponent<EnemyHP>();
         if (enemyHealth != null)
         {
             enemyHealth.TakeDamage(damage);
         }
-        Destroy(gameObject); 
+        
+        // [변경] Destroy 대신 비활성화(풀로 반납)
+        Deactivate(); 
+    }
+
+    // [추가] 공통 비활성화 함수
+    void Deactivate()
+    {
+        target = null; // 타겟 정보 초기화
+        gameObject.SetActive(false); // 오브젝트 풀러로 반납
     }
 }

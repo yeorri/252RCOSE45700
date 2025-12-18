@@ -38,15 +38,15 @@ public class GridTile : MonoBehaviour
         }
     }
 
-    // 마우스가 들어왔을 때 (미리 검사!)
+    // 마우스가 들어왔을 때 미리 검사
     void OnMouseEnter()
     {
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
         if (isOccupied) return; // 이미 타워 있으면 무시
         if (isMenuOpen) return;
 
-        // 1. TowerBuilder에게 물어봅니다. "여기 길 막히나요?"
-        // (마우스 올리는 순간 즉시 계산)
+        // 1. TowerBuilder에게 "여기 길 막히나요?"
+        // 마우스 올리는 순간 즉시 계산
         isBuildSafe = TowerBuilder.Instance.CheckPathSafety(myPosition);
 
         // 2. 결과에 따라 색상 변경
@@ -73,7 +73,7 @@ public class GridTile : MonoBehaviour
     {
         if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject()) return;
         if (isOccupied) return;
-        
+
         isBuildSafe = TowerBuilder.Instance.CheckPathSafety(myPosition);
         // 3. 아까 검사한 결과(isBuildSafe)를 보고 행동 결정
         if (isBuildSafe)
@@ -83,10 +83,7 @@ public class GridTile : MonoBehaviour
         }
         else
         {
-            // 위험하면 -> 메뉴 안 열고 경고 메시지!
             Debug.Log("여기에는 지을 수 없습니다! (길이 막힘)");
-            
-            // (선택) 여기서 "띠-딕!" 하는 경고음 효과음을 넣어도 좋습니다.
         }
     }
 }

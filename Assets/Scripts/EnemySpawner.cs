@@ -29,7 +29,7 @@ public class EnemySpawner : MonoBehaviour
 
     void Awake()
     {
-        UnityEngine.AI.NavMesh.pathfindingIterationsPerFrame = 1000;
+        UnityEngine.AI.NavMesh.pathfindingIterationsPerFrame = 2000;
     }
 
     void Start()
@@ -77,7 +77,6 @@ public class EnemySpawner : MonoBehaviour
         }
         else if (enemyContainer.childCount > 0)
         {
-            // 전투 중에는 전투 중 메시지 표시
             countdownText.text = "";
         }
         else if (currentWaveIndex < waves.Length)
@@ -88,8 +87,7 @@ public class EnemySpawner : MonoBehaviour
         }
         else
         {
-            // 모든 웨이브 클리어 시
-            countdownText.text = "All Waves Clear!";
+            countdownText.text = "";
         }
     }
 

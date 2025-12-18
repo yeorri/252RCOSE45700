@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement; // [필수] 씬(Scene)을 다시 불러오려면 이게 필요합니다!
+using UnityEngine.AI;
 
 public class GameManager : MonoBehaviour
 {
@@ -43,6 +44,23 @@ public class GameManager : MonoBehaviour
         // 시작할 때 게임 오버 창은 꺼둡니다.
         if(gameOverUI != null) gameOverUI.SetActive(false);
     }
+    public void UpdateAllEnemiesPath()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject goal = GameObject.Find("Goal"); // Goal 오브젝트 이름 확인 필요
+
+        if (goal == null) return;
+
+        foreach (GameObject enemy in enemies)
+        {
+            NavMeshAgent agent = enemy.GetComponent<NavMeshAgent>();
+            if (agent != null)
+            {
+                // SetDestinationImmediate를 사용하여 즉시 갱신
+                agent.SetDestinationImmediate(goal.transform.position, 1.0f);
+            }
+        }
+    }
 
     public void TakeDamage(int amount)
     {
@@ -73,6 +91,7 @@ public class GameManager : MonoBehaviour
     }
     public void WinGame()
     {
+        if (isGameOver) return;
         bgmSource.Stop();
         bgmSource.clip = victoryMusic;
         bgmSource.loop = true;
@@ -86,7 +105,7 @@ public class GameManager : MonoBehaviour
         if (victoryUI != null)
         {
             victoryUI.SetActive(true); // 승리 패널 켜기!
-            Time.timeScale = 0f; // 게임 정지 (선택 사항)
+            Time.timeScale = 0f; // 게임 정지 
         }
     }
 
@@ -113,7 +132,7 @@ public class GameManager : MonoBehaviour
     // "다시 하기" 버튼이 누를 함수
     public void Retry()
     {
-        // 1. 멈췄던 시간을 다시 흐르게 함 (중요! 안 하면 재시작해도 멈춰있음)
+        // 1. 멈췄던 시간을 다시 흐르게 함 
         Time.timeScale = 1f;
 
         // 2. 현재 보고 있는 씬을 처음부터 다시 로드

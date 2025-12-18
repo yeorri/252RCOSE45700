@@ -18,6 +18,9 @@ public class Tower : MonoBehaviour
     public GameObject rangeIndicator; 
     public Outline towerOutline;      
     public GameObject floatingTextPrefab;
+    
+    [Header("풀링 설정")]
+    public string bulletTag;
 
     [Header("업그레이드 상승폭")]
     public float damageStep = 5f;   
@@ -52,12 +55,9 @@ public class Tower : MonoBehaviour
     {
         towerName = gameObject.name.Replace("(Clone)", "").Trim();
         totalSpentMoney = baseCost;
-        
-        // [변경] InvokeRepeating 제거함.
-        // 이제 Update에서 직접 로직을 제어합니다.
     }
 
-    // --- 공격 및 타겟팅 로직 (핵심 변경 부분) ---
+    // --- 공격 및 타겟팅 로직 ---
 
     void Update()
     {
@@ -71,14 +71,14 @@ public class Tower : MonoBehaviour
             }
         }
 
-        // 2. 타겟이 없다면? -> 새로운 타겟 검색 (0.2초마다 시도 - 최적화)
+        // 2. 타겟이 없다면? -> 새로운 타겟 검색 (0.5초마다 시도 - 최적화)
         if (target == null)
         {
             searchCountdown -= Time.deltaTime;
             if (searchCountdown <= 0f)
             {
                 FindNearestTarget();
-                searchCountdown = 0.2f; // 검색 주기는 0.2초로 설정
+                searchCountdown = 0.5f; // 검색 주기는 0.2초로 설정
             }
         }
 
@@ -147,21 +147,27 @@ public class Tower : MonoBehaviour
         }
     }
 
+// Tower.cs의 Shoot 함수 내부
     void Shoot()
     {
-        if (bulletPrefab != null && firePoint != null)
+        if (firePoint != null)
         {
-            GameObject bulletGO = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
-            Bullet bullet = bulletGO.GetComponent<Bullet>();
+            // [에러 해결] 중복 선언을 삭제하고 SpawnFromPool 하나만 사용합니다.
+            // 인스펙터의 bulletTag(예: "Clone", "StarFighter")를 기준으로 총알을 가져옵니다.
+            GameObject bulletGO = ObjectPooler.Instance.SpawnFromPool(bulletTag, firePoint.position, firePoint.rotation);
 
-            if (bullet != null)
+            if (bulletGO != null)
             {
-                bullet.Setup(target, damage); // 데미지 정보 전달
+                Bullet bullet = bulletGO.GetComponent<Bullet>();
+                if (bullet != null)
+                {
+                    bullet.Setup(target, damage);
+                }
             }
         }
+    
         if (sfxSource != null && shootSound != null)
         {
-            // PlayOneShot은 소리가 겹쳐도 끊기지 않고 끝까지 재생됩니다.
             sfxSource.PlayOneShot(shootSound);
         }
     }

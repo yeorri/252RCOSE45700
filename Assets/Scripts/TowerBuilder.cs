@@ -95,6 +95,7 @@ public class TowerBuilder : MonoBehaviour
 
             MazeSolver.Instance.BlockNode(buildPos);
             tile.isOccupied = true;
+            GameManager.Instance.UpdateAllEnemiesPath();
         }
         else
         {

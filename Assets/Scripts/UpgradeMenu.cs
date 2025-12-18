@@ -25,14 +25,14 @@ public class UpgradeMenu : MonoBehaviour
         if (selectedTower != null)
         {
             selectedTower.HideRange();
-            selectedTower.SetSelectionState(false); // [중요] 이전 타워에게 "너 이제 선택 풀렸어"라고 알림
+            selectedTower.SetSelectionState(false); // 이전 타워에게 "너 이제 선택 풀렸어"라고 알림
         }
 
         selectedTower = tower;
 
         // 2. 새로 선택된 타워 -> 하이라이트 켜기
         selectedTower.ShowRange();
-        selectedTower.SetSelectionState(true); // [중요] 새 타워에게 "너 선택됐어!"라고 알림 (이게 있어야 유지됨!)
+        selectedTower.SetSelectionState(true); // 새 타워에게 "너 선택됐어!"라고 알림 (이게 있어야 유지됨!)
 
         // 메뉴 위치 잡기
         transform.position = tower.transform.position + Vector3.up * 3f + Vector3.right * 2f + Vector3.back * 1f; 
@@ -117,7 +117,7 @@ public class UpgradeMenu : MonoBehaviour
         } 
     }
     
-    // 닫기 버튼용 (혹시 만드셨다면)
+    // 닫기 버튼
     public void OnClickClose() 
     { 
         CloseMenu(); 

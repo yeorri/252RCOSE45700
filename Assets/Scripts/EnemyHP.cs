@@ -3,9 +3,12 @@ using UnityEngine.UI;
 
 public class EnemyHP : MonoBehaviour
 {
+    [Header("Enemy 스펙")]
     public float maxHP = 100f;
     private float currentHP;
     public int killReward = 10;
+    public int damageToBase = 1;
+
     [Header("UI")]
     public Slider hpSlider;
 
@@ -21,7 +24,6 @@ public class EnemyHP : MonoBehaviour
     public void TakeDamage(float damage)
     {
         currentHP -= damage;
-        //Debug.Log("현재 체력: " + currentHP + " / 슬라이더 값: " + (currentHP / maxHP));
         UpdateHealthUI();
         if (currentHP <= 0)
         {
@@ -45,13 +47,10 @@ public class EnemyHP : MonoBehaviour
         {
             Vector3 spawnPos = transform.position + new Vector3(0, 1.5f, 0);
             
-            // 1. 생성된 오브젝트를 변수(go)에 담습니다.
             GameObject go = Instantiate(floatingTextPrefab, spawnPos, floatingTextPrefab.transform.rotation);
 
-            // 2. [핵심] 자식들 중에 숨어있는 Text 컴포넌트를 찾습니다.
             Text textComp = go.GetComponentInChildren<Text>();
 
-            // 3. 찾았다면 내용을 killReward로 바꿔치기 합니다.
             if (textComp != null)
             {
                 textComp.text = $"+{killReward}G"; 
